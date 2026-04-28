@@ -190,6 +190,28 @@ Limitations:
 
 ---
 
+### 6. No Automatic Image Ordering
+
+This implementation assumes that input images are already arranged in the correct sequential order.
+
+* Images are stitched in a linear chain (i → i+1)
+* No global matching or graph-based ordering is performed
+* No similarity-based reordering is applied
+
+**Implications:**
+
+* Incorrect input order leads to:
+  - Matching failure
+  - Invalid homography estimation
+  - Severe distortion or complete stitching breakdown
+
+**Requirement:**
+
+* Images must be captured and stored in order (e.g., left-to-right or right-to-left)
+* File naming should reflect capture sequence
+
+---
+
 ## 🚀 Possible Improvements
 
 ### 📷 Better Image Capture
