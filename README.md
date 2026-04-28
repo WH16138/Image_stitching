@@ -14,7 +14,7 @@ Instead of using built-in stitching functions, the pipeline explicitly implement
 * Feature Detection (ORB)
 * Feature Matching (KNN + Ratio Test)
 * Robust Homography Estimation (RANSAC)
-* Global Alignment across multiple images
+* sequential global alignment via accumulated pairwise homographies
 * Distance-based Blending
 
 ---
@@ -24,12 +24,12 @@ Instead of using built-in stitching functions, the pipeline explicitly implement
 ### 1. Feature-based Alignment
 
 * ORB is used for fast and efficient feature extraction
-* KNN matching with Lowe’s Ratio Test ensures robust correspondences
+* KNN matching with Lowe’s Ratio Test helps improve matching reliability
 
 ### 2. Homography Estimation
 
 * RANSAC removes outliers
-* Inlier ratio is used to validate transformation quality
+* Inlier ratio is used to reject unreliable transformations (no fallback strategy)
 
 ### 3. Global Transformation
 
@@ -39,11 +39,11 @@ Instead of using built-in stitching functions, the pipeline explicitly implement
 ### 4. Distance-based Blending
 
 * Weighted blending using distance transform
-* Reduces visible seams compared to naive averaging
+* Reduces visible seams compared to naive averaging, but does not handle exposure or color differences
 
 ### 5. Dynamic Canvas Generation
 
-* Output canvas is computed from warped image boundaries
+* Canvas is estimated from warped boundaries with additional padding
 
 ---
 
@@ -65,7 +65,7 @@ Image_stitching/
 python main.py
 ```
 
-* Place input images in `./images/`
+* Place input images in `./images/`. or use `capture.py` to capture images from a webcam.
 * Output:
 
   * `panorama_result.jpg` (full resolution)
