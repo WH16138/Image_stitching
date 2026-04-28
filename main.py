@@ -30,12 +30,11 @@ def match_features(desc1, desc2):
 
     good = []
     for m, n in matches:
-        if m.distance < 0.7 * n.distance:  # ← 더 엄격하게
+        if m.distance < 0.7 * n.distance:
             good.append(m)
 
     good = sorted(good, key=lambda x: x.distance)
 
-    # 너무 많이 쓰면 오히려 노이즈 증가
     good = good[:100]
 
     return good
@@ -53,7 +52,6 @@ def compute_homography(kp1, kp2, matches):
 
     H, mask = cv.findHomography(pts2, pts1, cv.RANSAC, 3.0)
 
-    # 🔥 핵심: inlier 비율 검사
     inlier_ratio = np.sum(mask) / len(mask)
 
     if inlier_ratio < 0.3:
@@ -114,7 +112,6 @@ def crop_black(image):
     return image[y:y+h, x:x+w]
 
 def create_weight_mask(mask):
-    # 거리 기반 weight (중앙이 높고 경계가 낮음)
     dist = cv.distanceTransform(mask.astype(np.uint8), cv.DIST_L2, 5)
     dist = dist / (dist.max() + 1e-6)
     return dist
@@ -169,7 +166,6 @@ def stitch(images):
         gray = cv.cvtColor(warped, cv.COLOR_BGR2GRAY)
         mask = (gray > 0).astype(np.uint8)
 
-        # 🔥 핵심: 거리 기반 weight
         w = create_weight_mask(mask)
 
         canvas += warped * w[..., None]
@@ -179,10 +175,6 @@ def stitch(images):
     result = (canvas / weight_sum[..., None]).astype(np.uint8)
     return result
 
-
-# =========================
-# 실행
-# =========================
 # =========================
 # 실행
 # =========================
